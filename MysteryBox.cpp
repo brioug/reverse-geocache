@@ -11,14 +11,12 @@ MysteryBox::MysteryBox() {
   sleeping = false;
 }
 
-void MysteryBox::Setup(Team team, LiquidCrystal* lcd, byte servo_pin, byte cheat_pin) {
+void MysteryBox::Setup(Team team, LiquidCrystal* lcd, byte cheat_pin) {
   _team = team;
   _lcd = lcd;
   _l1.Setup(lcd, "");
   _l2.Setup(lcd, "", 1);
   _cheat_pin = cheat_pin;
-  _servo_pin = servo_pin;
-  _servo.attach(servo_pin);
   
   changeTeam(team);
 }
@@ -40,14 +38,6 @@ void MysteryBox::stateIsOldNow() {
   _state_just_changed = false;
 }
 
-void MysteryBox::lockLatch() {
-  _servo.write(0);
-}
-
-void MysteryBox::unlockLatch() {
-  _servo.write(90);
-}
-
 boolean MysteryBox::waited(unsigned int wait_time) {
   return (millis() - _previousTime) > wait_time;
 }
@@ -65,7 +55,6 @@ void MysteryBox::Update() {
     case BOX_STATE_START_UP:
       if (_state_just_changed) {
         lcdPowerOn();
-        lockLatch();
         _l1.Change("** MysteryBox **");
         _l2.Change("      v0.8      ");
         stateIsOldNow();
@@ -157,7 +146,6 @@ void MysteryBox::Update() {
     case BOX_STATE_UNLOCKED:
       if (_state_just_changed) {
         _l1.Change(F("**  GAGNE !!  **"));
-        unlockLatch();
         stateIsOldNow();
       } else if (waited()) {
         changeState(BOX_STATE_THE_END);

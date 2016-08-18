@@ -2,7 +2,6 @@
 #include <LiquidCrystal.h>
 
 // Hardware constants
-static const byte SERVO_PIN = 5;
 static const uint32_t GPS_BAUD = 9600;
 static const byte TEST_PIN = 2;
 static const byte CHEAT_PIN = 4;
@@ -62,7 +61,7 @@ void setup() {
   pinMode(TEST_PIN, INPUT_PULLUP);
   pinMode(CHEAT_PIN, INPUT_PULLUP);
   lcd.begin(16, 2);
-  box.Setup(teams[toTeamIndex()], &lcd, SERVO_PIN, CHEAT_PIN);
+  box.Setup(teams[toTeamIndex()], &lcd, CHEAT_PIN);
 }
 
 void loop() {

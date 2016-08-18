@@ -9,7 +9,6 @@
 #include "Arduino.h"
 #include <avr/sleep.h>
 #include <TinyGPS++.h>
-#include <Servo.h>
 #include "DisplayLine.h"
 #include "Team.h"
 
@@ -38,7 +37,6 @@ class MysteryBox {
   // State machine internal state
   TinyGPSPlus _gps;
   DisplayLine _l1, _l2;
-  Servo _servo;
   LiquidCrystal* _lcd;
 
   Team _team;
@@ -47,7 +45,6 @@ class MysteryBox {
   byte _current_try;
   byte _acqu_try;
   boolean _state_just_changed;
-  byte _servo_pin;
   byte _cheat_pin;
   unsigned long _distance;
 
@@ -55,11 +52,9 @@ class MysteryBox {
   boolean sleeping;
   
   MysteryBox();
-  void Setup(Team _team, LiquidCrystal* lcd, byte servo_pin, byte cheat_pin);
+  void Setup(Team _team, LiquidCrystal* lcd, byte cheat_pin);
   void changeState(byte new_state);
   void stateIsOldNow();
-  void lockLatch();
-  void unlockLatch();
   void lcdPowerOn();
   void lcdPowerOff();
   boolean waited(unsigned int wait_time=MAIN_DELAY_DURATION);
