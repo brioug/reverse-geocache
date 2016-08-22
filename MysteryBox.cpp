@@ -11,14 +11,20 @@ MysteryBox::MysteryBox() {
   sleeping = false;
 }
 
-void MysteryBox::Setup(Team team, LiquidCrystal* lcd, byte cheat_pin) {
+void MysteryBox::Setup(Team team, LiquidCrystal* lcd) {
   _team = team;
   _lcd = lcd;
   _l1.Setup(lcd, "");
   _l2.Setup(lcd, "", 1);
-  _cheat_pin = cheat_pin;
   
   changeTeam(team);
+}
+
+void MysteryBox::DebugSetup(LiquidCrystal *lcd) {
+  _lcd = lcd;
+  lcdPowerOn();
+  _l1.Setup(lcd, "DEBUG MODE");
+  _l2.Setup(lcd, "No sync...", 1);
 }
 
 void MysteryBox::changeTeam(Team team) {
@@ -66,7 +72,7 @@ void MysteryBox::Update() {
     case BOX_STATE_INIT:
       if (_state_just_changed) {
         lcdPowerOn();
-        _l1.Change("Bonjour equipe " + _team.name);
+        _l1.Change("Bonjour !");
         _l2.Change("Essai " + String(_current_try) + "/" + String(NB_TRIES));
         stateIsOldNow();
       } else if (waited(6000)) {
@@ -123,22 +129,17 @@ void MysteryBox::Update() {
         _l1.Change(F("... Trouve !"));
         stateIsOldNow();
       } else if (waited(2000)) {
-        // Test cheat...
-        if (digitalRead(_cheat_pin) == LOW) {
+        // Test distance
+        _distance = (unsigned long)TinyGPSPlus::distanceBetween(
+          _gps.location.lat(),
+          _gps.location.lng(),
+          _team.lat,
+          _team.lng
+        );
+        if (_distance <= 2) {
           changeState(BOX_STATE_UNLOCKED);
         } else {
-          // Test distance
-          _distance = (unsigned long)TinyGPSPlus::distanceBetween(
-            _gps.location.lat(),
-            _gps.location.lng(),
-            _team.lat,
-            _team.lng
-          ) / 1000;
-          if (_distance <= 1) {
-            changeState(BOX_STATE_UNLOCKED);
-          } else {
-            changeState(BOX_STATE_TOO_FAR);
-          }
+          changeState(BOX_STATE_TOO_FAR);
         }
       }
       break;
@@ -147,16 +148,12 @@ void MysteryBox::Update() {
       if (_state_just_changed) {
         _l1.Change(F("**  GAGNE !!  **"));
         stateIsOldNow();
-      } else if (waited()) {
-        changeState(BOX_STATE_THE_END);
-        _l1.Change(F("**  GAGNE !!  **"));
-        _l2.Change(F(" "));
       }
       break;
 
     case BOX_STATE_TOO_FAR:
       if (_state_just_changed) {
-        _l1.Change("Distance " + String(_distance) + " km. Acces refuse !");
+        _l1.Change("Distance " + String(_distance) + " m. Acces refuse !");
         _current_try++;
         stateIsOldNow();
       } else if (waited(6000)) {
@@ -184,6 +181,23 @@ void MysteryBox::Update() {
 
   _l1.Update();
   _l2.Update();
+  while (Serial.available() > 0) {
+    _gps.encode(Serial.read());
+  }
+}
+
+void MysteryBox::DebugUpdate() {
+  if (millis() >= _previousTime + 500) {
+    _previousTime = millis();
+    if (_gps.location.isValid()) {
+      _l1.Change(String(_gps.location.lat(), 6) + " / " + String(_gps.satellites.value()));
+      _l2.Change(String(_gps.location.lng(), 6) + " / " + String(_gps.hdop.value()));
+  
+      _l1.Update();
+      _l2.Update();
+    }
+  }
+  
   while (Serial.available() > 0) {
     _gps.encode(Serial.read());
   }

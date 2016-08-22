@@ -4,20 +4,22 @@
 // Hardware constants
 static const uint32_t GPS_BAUD = 9600;
 static const byte TEST_PIN = 2;
-static const byte CHEAT_PIN = 4;
+static const byte RESET_PIN = 3;
 static const byte POWER_OFF_PIN = 3;
+static const byte DEBUG_MODE = 100;
 
 // Teams
 Team teams[] = {
-  { "Les Ragondins", 48.656335, -1.970385 },
-  { "Ze Sprountz team", 48.618890, -2.105556 },
-  { "Gluth World Co. Inc.", 48.656335, -1.970385 },
-  { "Les blaireaux", 48.656335, -1.970385 }
+  { 48.618805, -2.105254 }, // Jardin chez JB
+  { 48.638316, -2.027647 }, // Parking Bas-Sablons, en face Nautilot
+  { 48.640334, -2.028165 }, // Bout du môle des Bas-Sablons
+  { 48.636654, -2.029640 } // Entrée du fort d'Aleth
 };
 
 // Global resource objects
 TinyGPSPlus gps;
-LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
+int team_index;
 
 // Main state machine
 MysteryBox box;
@@ -31,8 +33,8 @@ byte toTeamIndex() {
     return 2;
   } else if (analogRead(4) <= 50) {
     return 3;
-  } else { // Comportement par défaut
-    return 0;
+  } else { // Mode debug : Affichage des coordonnées
+    return DEBUG_MODE;
   }
 }
 
@@ -59,12 +61,25 @@ void setup() {
   pinMode(POWER_OFF_PIN, OUTPUT);
   digitalWrite(POWER_OFF_PIN, HIGH);
   pinMode(TEST_PIN, INPUT_PULLUP);
-  pinMode(CHEAT_PIN, INPUT_PULLUP);
+  pinMode(RESET_PIN, INPUT_PULLUP);
   lcd.begin(16, 2);
-  box.Setup(teams[toTeamIndex()], &lcd, CHEAT_PIN);
+  team_index = toTeamIndex();
+  
+  if (team_index == DEBUG_MODE) { // Mode debug
+    box.DebugSetup(&lcd);
+  } else { // Normal mode
+    box.Setup(teams[team_index], &lcd);
+  }
 }
 
 void loop() {
-  box.Update();
+  if (digitalRead(RESET_PIN) == 0) {
+    soft_restart();
+  }
+  if (team_index == DEBUG_MODE) { // Mode debug
+    box.DebugUpdate();
+  } else {
+    box.Update();
+  }
 }
 

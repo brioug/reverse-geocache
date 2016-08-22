@@ -9,6 +9,7 @@
 #include "Arduino.h"
 #include <avr/sleep.h>
 #include <TinyGPS++.h>
+#include "SoftReset.h"
 #include "DisplayLine.h"
 #include "Team.h"
 
@@ -19,7 +20,7 @@ class MysteryBox {
   private:
   // Behavior constants
   static const byte NB_ACQU_TRIES = 10;
-  static const byte NB_TRIES = 3;
+  static const byte NB_TRIES = 100;
   static const unsigned int MAIN_DELAY_DURATION = 4000;
 
   // State constants
@@ -45,20 +46,21 @@ class MysteryBox {
   byte _current_try;
   byte _acqu_try;
   boolean _state_just_changed;
-  byte _cheat_pin;
   unsigned long _distance;
 
   public:
   boolean sleeping;
   
   MysteryBox();
-  void Setup(Team _team, LiquidCrystal* lcd, byte cheat_pin);
+  void Setup(Team _team, LiquidCrystal* lcd);
+  void DebugSetup(LiquidCrystal* lcd);
   void changeState(byte new_state);
   void stateIsOldNow();
   void lcdPowerOn();
   void lcdPowerOff();
   boolean waited(unsigned int wait_time=MAIN_DELAY_DURATION);
   void Update();
+  void DebugUpdate();
   void changeTeam(Team _team);
 };
 

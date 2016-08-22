@@ -4,7 +4,6 @@
 */
 
 struct Team {
-  String name;
   double lat;
   double lng;
 };
