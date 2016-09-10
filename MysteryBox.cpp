@@ -62,7 +62,7 @@ void MysteryBox::Update() {
       if (_state_just_changed) {
         lcdPowerOn();
         _l1.Change("** MysteryBox **");
-        _l2.Change("      v0.8      ");
+        _l2.Change("      v1.0      ");
         stateIsOldNow();
       } else if (waited(4000)) {
         changeState(BOX_STATE_SHUTDOWN);
@@ -153,7 +153,7 @@ void MysteryBox::Update() {
 
     case BOX_STATE_TOO_FAR:
       if (_state_just_changed) {
-        _l1.Change("Distance " + String(_distance) + " m. Acces refuse !");
+        _l1.Change("Distance " + String(_distance) + " m. Trop Loin !");
         _current_try++;
         stateIsOldNow();
       } else if (waited(6000)) {
@@ -192,10 +192,10 @@ void MysteryBox::DebugUpdate() {
     if (_gps.location.isValid()) {
       _l1.Change(String(_gps.location.lat(), 6) + " / " + String(_gps.satellites.value()));
       _l2.Change(String(_gps.location.lng(), 6) + " / " + String(_gps.hdop.value()));
-  
-      _l1.Update();
-      _l2.Update();
     }
+
+    _l1.Update();
+    _l2.Update();
   }
   
   while (Serial.available() > 0) {

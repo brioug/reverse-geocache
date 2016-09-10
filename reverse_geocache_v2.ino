@@ -5,7 +5,6 @@
 static const uint32_t GPS_BAUD = 9600;
 static const byte TEST_PIN = 2;
 static const byte RESET_PIN = 3;
-static const byte POWER_OFF_PIN = 3;
 static const byte DEBUG_MODE = 100;
 
 // Teams
@@ -25,14 +24,8 @@ int team_index;
 MysteryBox box;
 
 byte toTeamIndex() {
-  if (analogRead(1) <= 50) {
-    return 0;
-  } else if (analogRead(2) <= 50) {
-    return 1;
-  } else if (analogRead(3) <= 50) {
-    return 2;
-  } else if (analogRead(4) <= 50) {
-    return 3;
+  if (analogRead(2) <= 50) {
+    return 1; // Team index in teams[] array
   } else { // Mode debug : Affichage des coordonnées
     return DEBUG_MODE;
   }
@@ -58,8 +51,6 @@ void wakeUpNow() {
 
 void setup() {
   Serial.begin(GPS_BAUD);
-  pinMode(POWER_OFF_PIN, OUTPUT);
-  digitalWrite(POWER_OFF_PIN, HIGH);
   pinMode(TEST_PIN, INPUT_PULLUP);
   pinMode(RESET_PIN, INPUT_PULLUP);
   lcd.begin(16, 2);
