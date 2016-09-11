@@ -9,10 +9,10 @@ static const byte DEBUG_MODE = 100;
 
 // Teams
 Team teams[] = {
-  { 48.618805, -2.105254 }, // Jardin chez JB
-  { 48.638316, -2.027647 }, // Parking Bas-Sablons, en face Nautilot
-  { 48.640334, -2.028165 }, // Bout du môle des Bas-Sablons
-  { 48.636654, -2.029640 } // Entrée du fort d'Aleth
+  { 48.695545, -1.888100 }, // Point "Champ vers panneau routier"
+  { 48.695114, -1.884603 }, // Point "Petit point d'eau près du parking"
+  { 48.696461,-1.882665 }, // Point "Le Verger"
+  { 48.6988400, -1.888726 }, // Point "Petit chemin entre bout du champs et chemin de ronde"
 };
 
 // Global resource objects
@@ -25,7 +25,7 @@ MysteryBox box;
 
 byte toTeamIndex() {
   if (analogRead(2) <= 50) {
-    return 1; // Team index in teams[] array
+    return 0; // Team index in teams[] array
   } else { // Mode debug : Affichage des coordonnées
     return DEBUG_MODE;
   }
