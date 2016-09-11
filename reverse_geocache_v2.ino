@@ -25,7 +25,7 @@ MysteryBox box;
 
 byte toTeamIndex() {
   if (analogRead(2) <= 50) {
-    return 0; // Team index in teams[] array
+    return 2; // Team index in teams[] array
   } else { // Mode debug : Affichage des coordonnées
     return DEBUG_MODE;
   }

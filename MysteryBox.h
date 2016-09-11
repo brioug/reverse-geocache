@@ -21,7 +21,7 @@ class MysteryBox {
   // Behavior constants
   static const byte NB_ACQU_TRIES = 10;
   static const byte NB_TRIES = 25;
-  static const unsigned int MAIN_DELAY_DURATION = 4000;
+  static const unsigned int MAIN_DELAY_DURATION = 2000;
 
   // State constants
   static const byte BOX_STATE_START_UP = 0;
