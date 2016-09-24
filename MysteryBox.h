@@ -8,8 +8,7 @@
 
 #include "Arduino.h"
 #include <avr/sleep.h>
-#include <TinyGPS++.h>
-#include "SoftReset.h"
+#include "TinyGPS++.h"
 #include "DisplayLine.h"
 #include "Team.h"
 

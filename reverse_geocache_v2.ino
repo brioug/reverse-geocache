@@ -1,5 +1,6 @@
 #include "MysteryBox.h"
 #include <LiquidCrystal.h>
+#include "SoftReset.h"
 
 // Hardware constants
 static const uint32_t GPS_BAUD = 9600;
