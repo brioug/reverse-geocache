@@ -6,13 +6,11 @@ static const uint32_t GPS_BAUD = 9600;
 static const byte TEST_PIN = 2;
 static const byte RESET_PIN = 3;
 static const byte DEBUG_MODE = 100;
+static const byte CURRENT_TEAM = 3; // Team index in teams[] array
 
 // Teams
 Team teams[] = {
-  { 48.695545, -1.888100 }, // Point "Champ vers panneau routier"
-  { 48.695114, -1.884603 }, // Point "Petit point d'eau près du parking"
-  { 48.697384, -1.889240 }, // Point "Milieu champ"
-  { 48.6988400, -1.888726 }, // Point "Petit chemin entre bout du champs et chemin de ronde"
+  { 48.649396, -2.027162 } // Intra
 };
 
 // Global resource objects
@@ -25,7 +23,9 @@ MysteryBox box;
 
 byte toTeamIndex() {
   if (analogRead(2) <= 50) {
-    return 3; // Team index in teams[] array
+    return 0;
+    // randomSeed(analogRead(5));
+    // return random(13);
   } else { // Mode debug : Affichage des coordonnées
     return DEBUG_MODE;
   }
