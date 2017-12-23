@@ -7,7 +7,6 @@ static const uint32_t GPS_BAUD = 9600;
 static const byte TEST_PIN = 2;
 static const byte RESET_PIN = 3;
 static const byte DEBUG_MODE = 100;
-static const byte CURRENT_TEAM = 3; // Team index in teams[] array
 
 // Teams
 Team teams[] = {
@@ -23,13 +22,13 @@ int team_index;
 MysteryBox box;
 
 byte toTeamIndex() {
-  if (analogRead(2) <= 50) {
+  // if (analogRead(2) <= 50) {
     return 0;
     // randomSeed(analogRead(5));
     // return random(13);
-  } else { // Mode debug : Affichage des coordonnées
-    return DEBUG_MODE;
-  }
+  // } else { // Mode debug : Affichage des coordonnées
+    // return DEBUG_MODE;
+  // }
 }
 
 void sleepNow() {
