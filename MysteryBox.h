@@ -10,7 +10,7 @@
 #include <avr/sleep.h>
 #include "TinyGPS++.h"
 #include "DisplayLine.h"
-#include "Team.h"
+#include "Place.h"
 #include <EEPROM.h>
 
 void wakeUpNow();
@@ -39,8 +39,9 @@ class MysteryBox {
   TinyGPSPlus _gps;
   DisplayLine _l1, _l2;
   LiquidCrystal* _lcd;
+  boolean _new_place_saved = false;
 
-  Team _team;
+  Place _place;
   byte _state;
   unsigned long _previousTime;
   byte _current_try;
@@ -52,7 +53,7 @@ class MysteryBox {
   boolean sleeping;
   
   MysteryBox();
-  void Setup(Team _team, LiquidCrystal* lcd);
+  void Setup(Place _place, LiquidCrystal* lcd);
   void ReprogramSetup(LiquidCrystal* lcd);
   void changeState(byte new_state);
   void stateIsOldNow();
@@ -60,8 +61,8 @@ class MysteryBox {
   void lcdPowerOff();
   boolean waited(unsigned int wait_time=MAIN_DELAY_DURATION);
   void Update();
-  void ReprogramUpdate();
-  void changeTeam(Team _team);
+  void ReprogramUpdate(byte test_pin);
+  void setPlace(Place _place);
 };
 
 #endif

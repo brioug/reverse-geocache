@@ -11,13 +11,13 @@ MysteryBox::MysteryBox() {
   sleeping = false;
 }
 
-void MysteryBox::Setup(Team team, LiquidCrystal* lcd) {
-  _team = team;
+void MysteryBox::Setup(Place place, LiquidCrystal* lcd) {
+  _place = place;
   _lcd = lcd;
   _l1.Setup(lcd, "");
   _l2.Setup(lcd, "", 1);
   
-  changeTeam(team);
+  setPlace(place);
 }
 
 void MysteryBox::ReprogramSetup(LiquidCrystal *lcd) {
@@ -27,8 +27,8 @@ void MysteryBox::ReprogramSetup(LiquidCrystal *lcd) {
   _l2.Setup(lcd, "No sync...", 1);
 }
 
-void MysteryBox::changeTeam(Team team) {
-  _team = team;
+void MysteryBox::setPlace(Place place) {
+  _place = place;
   _current_try = 1;
 
   changeState(BOX_STATE_START_UP);
@@ -133,8 +133,8 @@ void MysteryBox::Update() {
         _distance = (unsigned long)TinyGPSPlus::distanceBetween(
           _gps.location.lat(),
           _gps.location.lng(),
-          _team.lat,
-          _team.lng
+          _place.lat,
+          _place.lng
         );
         if (_distance <= 2) {
           changeState(BOX_STATE_UNLOCKED);
@@ -186,12 +186,28 @@ void MysteryBox::Update() {
   }
 }
 
-void MysteryBox::ReprogramUpdate() {
-  if (millis() >= _previousTime + 500) {
+void MysteryBox::ReprogramUpdate(byte test_pin) {
+  Place new_place;
+  float new_lat;
+  float new_lng;
+  
+  if (millis() >= _previousTime + 1000) {
     _previousTime = millis();
-    if (_gps.location.isValid()) {
-      _l1.Change(String(_gps.location.lat(), 6) + " / " + String(_gps.satellites.value()));
-      _l2.Change(String(_gps.location.lng(), 6) + " / " + String(_gps.hdop.value()));
+    if (_new_place_saved == false) {
+      if (_gps.location.isValid()) {
+        new_lat = _gps.location.lat();
+        new_lng = _gps.location.lng();
+        _l1.Change(String(new_lat, 6) + " / " + String(_gps.satellites.value()));
+        _l2.Change(String(new_lng, 6) + " / " + String(_gps.hdop.value()));
+  
+        if (digitalRead(test_pin) == LOW) {
+          new_place = { new_lat, new_lng };
+          EEPROM.put(0x0, new_place);
+          _l1.Change("Position saved");
+          _l2.Change("");
+          _new_place_saved = true;
+        }
+      }
     }
 
     _l1.Update();

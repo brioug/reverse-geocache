@@ -1,6 +1,5 @@
 #include "MysteryBox.h"
 #include <LiquidCrystal.h>
-#include "SoftReset.h"
 #include <EEPROM.h>
 
 /*
@@ -20,7 +19,7 @@ static const byte NORMAL_MODE = 1;
 static const byte REPROGRAM_MODE = 2;
 
 // Global resource objects
-Team team;
+Place place;
 TinyGPSPlus gps;
 LiquidCrystal lcd(8, 9, 10, 11, 12, 13);
 byte running_mode = NORMAL_MODE;
@@ -51,19 +50,24 @@ void setup() {
   pinMode(TEST_PIN, INPUT_PULLUP);
   pinMode(MODE_PIN, INPUT_PULLUP);
   lcd.begin(16, 2);
-  running_mode = digitalRead(MODE_PIN);
+  
+  if (digitalRead(MODE_PIN) == HIGH) {
+    running_mode = NORMAL_MODE;
+  } else {
+    running_mode = REPROGRAM_MODE;
+  }
   
   if (running_mode == REPROGRAM_MODE) {
     box.ReprogramSetup(&lcd);
   } else {
-    EEPROM.get(0x0, team);
-    box.Setup(team, &lcd);
+    EEPROM.get(0x0, place);
+    box.Setup(place, &lcd);
   }
 }
 
 void loop() {
   if (running_mode == REPROGRAM_MODE) {
-    box.ReprogramUpdate();
+    box.ReprogramUpdate(TEST_PIN);
   } else {
     box.Update();
   }
