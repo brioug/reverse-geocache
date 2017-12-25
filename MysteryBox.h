@@ -11,6 +11,7 @@
 #include "TinyGPS++.h"
 #include "DisplayLine.h"
 #include "Team.h"
+#include <EEPROM.h>
 
 void wakeUpNow();
 void sleepNow();
@@ -19,7 +20,7 @@ class MysteryBox {
   private:
   // Behavior constants
   static const byte NB_ACQU_TRIES = 10;
-  static const byte NB_TRIES = 25;
+  static const byte NB_TRIES = 100;
   static const unsigned int MAIN_DELAY_DURATION = 2000;
 
   // State constants
@@ -52,14 +53,14 @@ class MysteryBox {
   
   MysteryBox();
   void Setup(Team _team, LiquidCrystal* lcd);
-  void DebugSetup(LiquidCrystal* lcd);
+  void ReprogramSetup(LiquidCrystal* lcd);
   void changeState(byte new_state);
   void stateIsOldNow();
   void lcdPowerOn();
   void lcdPowerOff();
   boolean waited(unsigned int wait_time=MAIN_DELAY_DURATION);
   void Update();
-  void DebugUpdate();
+  void ReprogramUpdate();
   void changeTeam(Team _team);
 };
 

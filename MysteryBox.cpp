@@ -20,10 +20,10 @@ void MysteryBox::Setup(Team team, LiquidCrystal* lcd) {
   changeTeam(team);
 }
 
-void MysteryBox::DebugSetup(LiquidCrystal *lcd) {
+void MysteryBox::ReprogramSetup(LiquidCrystal *lcd) {
   _lcd = lcd;
   lcdPowerOn();
-  _l1.Setup(lcd, "DEBUG MODE");
+  _l1.Setup(lcd, "REPROGRAM MODE");
   _l2.Setup(lcd, "No sync...", 1);
 }
 
@@ -61,8 +61,8 @@ void MysteryBox::Update() {
     case BOX_STATE_START_UP:
       if (_state_just_changed) {
         lcdPowerOn();
-        _l1.Change("** MysteryBox **");
-        _l2.Change("      v1.0      ");
+        _l1.Change("Le cadeau d'Hugo");
+        _l2.Change("   Pour Noel !  ");
         stateIsOldNow();
       } else if (waited(4000)) {
         changeState(BOX_STATE_SHUTDOWN);
@@ -72,10 +72,10 @@ void MysteryBox::Update() {
     case BOX_STATE_INIT:
       if (_state_just_changed) {
         lcdPowerOn();
-        _l1.Change("Bonjour !");
+        _l1.Change("Salut Hugo !");
         _l2.Change("Essai " + String(_current_try) + "/" + String(NB_TRIES));
         stateIsOldNow();
-      } else if (waited(6000)) {
+      } else if (waited(4000)) {
         if (_current_try > NB_TRIES) {
           changeState(BOX_STATE_NO_MORE_TRIES);
         } else {
@@ -116,7 +116,7 @@ void MysteryBox::Update() {
 
     case BOX_STATE_NO_SYNC:
       if (_state_just_changed) {
-        _l1.Change(F("Pas de signal GPS :("));
+        _l1.Change(F("Pas de signal GPS !"));
         _acqu_try = 0;
         stateIsOldNow();
       } else if (waited()) {
@@ -146,7 +146,7 @@ void MysteryBox::Update() {
 
     case BOX_STATE_UNLOCKED:
       if (_state_just_changed) {
-        _l1.Change(F("**  GAGNE !!  **"));
+        _l1.Change(F("Tu y es ! Ton cadeau n'est pas loin..."));
         stateIsOldNow();
       }
       break;
@@ -186,7 +186,7 @@ void MysteryBox::Update() {
   }
 }
 
-void MysteryBox::DebugUpdate() {
+void MysteryBox::ReprogramUpdate() {
   if (millis() >= _previousTime + 500) {
     _previousTime = millis();
     if (_gps.location.isValid()) {
